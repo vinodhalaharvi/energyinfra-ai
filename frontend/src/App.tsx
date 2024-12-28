@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Activity, ArrowRight, Brain, Database, Shield} from 'lucide-react';
 import TryItSection from "./components/TryItSection.tsx";
 import ProtocolSimulator from "./components/ProtocolSimulator.tsx";
@@ -48,6 +48,7 @@ const Hero = () => (
 );
 
 // Feature card component
+// @ts-ignore
 const FeatureCard = ({icon: Icon, title, description}) => (
     <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
         <div className="text-blue-600 mb-4">
@@ -207,6 +208,9 @@ const UseCases = () => (
 );
 
 // Contact section
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 const Contact = () => (
     <div id="contact" className="py-16 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
