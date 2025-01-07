@@ -1,44 +1,53 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {ArrowRight, Cloud, Play, Server, Terminal} from 'lucide-react';
 
-const TerminalWindow = ({commands}) => {
+interface Command {
+    command: string;
+    output?: string; // Optional because some commands may not have output
+}
+  
+interface TerminalWindowProps {
+    commands: Command[];
+}
+
+const TerminalWindow = ({ commands }: TerminalWindowProps) => {
     const [currentStep, setCurrentStep] = useState(0);
-
+  
     return (
-        <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl">
-            {/* Terminal Header */}
-            <div className="bg-gray-800 px-4 py-2 flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"/>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"/>
-                <div className="w-3 h-3 rounded-full bg-green-500"/>
-                <span className="text-gray-400 text-sm ml-2">demo-terminal</span>
-            </div>
-
-            {/* Terminal Content */}
-            <div className="p-4 font-mono text-sm">
-                {commands.slice(0, currentStep + 1).map((cmd, idx) => (
-                    <div key={idx} className="mb-2">
-                        <div className="flex items-center gap-2 text-gray-400">
-                            <span className="text-green-400">$</span>
-                            <span className="text-white">{cmd.command}</span>
-                        </div>
-                        {cmd.output && (
-                            <div className="text-gray-400 ml-4 mt-1">{cmd.output}</div>
-                        )}
-                    </div>
-                ))}
-                {currentStep < commands.length - 1 && (
-                    <button
-                        onClick={() => setCurrentStep(prev => prev + 1)}
-                        className="text-blue-400 hover:text-blue-300 mt-2"
-                    >
-                        Next Step →
-                    </button>
-                )}
-            </div>
+      <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl">
+        {/* Terminal Header */}
+        <div className="bg-gray-800 px-4 py-2 flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-red-500" />
+          <div className="w-3 h-3 rounded-full bg-yellow-500" />
+          <div className="w-3 h-3 rounded-full bg-green-500" />
+          <span className="text-gray-400 text-sm ml-2">demo-terminal</span>
         </div>
+  
+        {/* Terminal Content */}
+        <div className="p-4 font-mono text-sm">
+          {commands.slice(0, currentStep + 1).map((cmd, idx) => (
+            <div key={idx} className="mb-2">
+              <div className="flex items-center gap-2 text-gray-400">
+                <span className="text-green-400">$</span>
+                <span className="text-white">{cmd.command}</span>
+              </div>
+              {cmd.output && (
+                <div className="text-gray-400 ml-4 mt-1">{cmd.output}</div>
+              )}
+            </div>
+          ))}
+          {currentStep < commands.length - 1 && (
+            <button
+              onClick={() => setCurrentStep((prev) => prev + 1)}
+              className="text-blue-400 hover:text-blue-300 mt-2"
+            >
+              Next Step →
+            </button>
+          )}
+        </div>
+      </div>
     );
-};
+};  
 
 const TryItSection = () => {
     const demoCommands = [

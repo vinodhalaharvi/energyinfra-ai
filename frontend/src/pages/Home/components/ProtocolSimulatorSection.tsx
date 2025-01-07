@@ -1,9 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Server, Cpu, Radio, Wifi, Globe, AlertTriangle,
-    Check, ZapOff, Activity, Terminal
-} from 'lucide-react';
+import { Server, Radio, Wifi, Activity, Terminal, LucideProps } from 'lucide-react';
+
+interface Protocol {
+    id: string;
+    name: string;
+    icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+    port: number;
+    code: string;
+}
+
+interface Metrics {
+    messagesProcessed: number;
+    errors: number;
+    latency: number;
+}
+  
 
 const simulatorState = {
     IDLE: 'idle',
@@ -12,104 +24,105 @@ const simulatorState = {
     RECOVERY: 'recovery'
 };
 
-const ProtocolSimulator = () => {
-    const [activeProtocols, setActiveProtocols] = useState([]);
+const protocols: Protocol[] = [
+    {
+        id: 'opcua',
+        name: 'OPC UA',
+        icon: Server,
+        port: 4840,
+        code: `func (r *OPCUAReader) Read() EdgeF[OPCValue] {
+return EdgeF[OPCValue]{
+    Run: func(ctx context.Context) (OPCValue, error) {
+        client := opcua.NewClient(options{
+            Endpoint: "opc.tcp://localhost:4840",
+            Security: opcua.SecurityBasic128Rsa15,
+        })
+        
+        // Read node value
+        node := client.Node(nodeID)
+        value, err := node.Read(ctx)
+        
+        return OPCValue{
+            NodeID: nodeID,
+            Value:  value,
+            Time:   time.Now(),
+        }, err
+    },
+}
+}`
+    },
+    {
+        id: 'modbus',
+        name: 'Modbus',
+        icon: Radio,
+        port: 502,
+        code: `func (r *ModbusReader) Read() EdgeF[ModbusData] {
+return EdgeF[ModbusData]{
+    Run: func(ctx context.Context) (ModbusData, error) {
+        handler := modbus.NewTCPClientHandler("localhost:502")
+        client := modbus.NewClient(handler)
+        
+        // Read holding registers
+        registers, err := client.ReadHoldingRegisters(0x0, 10)
+        
+        return ModbusData{
+            Register: 0x0,
+            Values:   registers,
+            Time:    time.Now(),
+        }, err
+    },
+}
+}`
+    },
+    {
+        id: 'mqtt',
+        name: 'MQTT',
+        icon: Wifi,
+        port: 1883,
+        code: `func (r *MQTTReader) Read() EdgeF[MQTTMessage] {
+return EdgeF[MQTTMessage]{
+    Run: func(ctx context.Context) (MQTTMessage, error) {
+        opts := mqtt.NewClientOptions().
+            AddBroker("tcp://localhost:1883").
+            SetClientID("edge-reader")
+        
+        client := mqtt.NewClient(opts)
+        if token := client.Connect(); token.Wait() && token.Error() != nil {
+            return MQTTMessage{}, token.Error()
+        }
+        
+        // Subscribe to topic
+        messages := make(chan MQTTMessage)
+        client.Subscribe("sensors/#", 0, func(c mqtt.Client, m mqtt.Message) {
+            messages <- MQTTMessage{
+                Topic:   m.Topic(),
+                Payload: m.Payload(),
+                Time:    time.Now(),
+            }
+        })
+        
+        select {
+        case msg := <-messages:
+            return msg, nil
+        case <-ctx.Done():
+            return MQTTMessage{}, ctx.Err()
+        }
+    },
+}
+}`
+    }
+];
+
+
+
+const ProtocolSimulatorSection = () => {
+    const [activeProtocols, setActiveProtocols] = useState<string[]>([]);
     const [simulatorStatus, setSimulatorStatus] = useState(simulatorState.IDLE);
-    const [activeCodeLine, setActiveCodeLine] = useState(0);
-    const [metrics, setMetrics] = useState({
+    const [metrics, setMetrics] = useState<Metrics>({
         messagesProcessed: 0,
         errors: 0,
-        latency: 0
+        latency: 0,
     });
-
-    const protocols = [
-        {
-            id: 'opcua',
-            name: 'OPC UA',
-            icon: Server,
-            port: 4840,
-            code: `func (r *OPCUAReader) Read() EdgeF[OPCValue] {
-    return EdgeF[OPCValue]{
-        Run: func(ctx context.Context) (OPCValue, error) {
-            client := opcua.NewClient(options{
-                Endpoint: "opc.tcp://localhost:4840",
-                Security: opcua.SecurityBasic128Rsa15,
-            })
-            
-            // Read node value
-            node := client.Node(nodeID)
-            value, err := node.Read(ctx)
-            
-            return OPCValue{
-                NodeID: nodeID,
-                Value:  value,
-                Time:   time.Now(),
-            }, err
-        },
-    }
-}`
-        },
-        {
-            id: 'modbus',
-            name: 'Modbus',
-            icon: Radio,
-            port: 502,
-            code: `func (r *ModbusReader) Read() EdgeF[ModbusData] {
-    return EdgeF[ModbusData]{
-        Run: func(ctx context.Context) (ModbusData, error) {
-            handler := modbus.NewTCPClientHandler("localhost:502")
-            client := modbus.NewClient(handler)
-            
-            // Read holding registers
-            registers, err := client.ReadHoldingRegisters(0x0, 10)
-            
-            return ModbusData{
-                Register: 0x0,
-                Values:   registers,
-                Time:    time.Now(),
-            }, err
-        },
-    }
-}`
-        },
-        {
-            id: 'mqtt',
-            name: 'MQTT',
-            icon: Wifi,
-            port: 1883,
-            code: `func (r *MQTTReader) Read() EdgeF[MQTTMessage] {
-    return EdgeF[MQTTMessage]{
-        Run: func(ctx context.Context) (MQTTMessage, error) {
-            opts := mqtt.NewClientOptions().
-                AddBroker("tcp://localhost:1883").
-                SetClientID("edge-reader")
-            
-            client := mqtt.NewClient(opts)
-            if token := client.Connect(); token.Wait() && token.Error() != nil {
-                return MQTTMessage{}, token.Error()
-            }
-            
-            // Subscribe to topic
-            messages := make(chan MQTTMessage)
-            client.Subscribe("sensors/#", 0, func(c mqtt.Client, m mqtt.Message) {
-                messages <- MQTTMessage{
-                    Topic:   m.Topic(),
-                    Payload: m.Payload(),
-                    Time:    time.Now(),
-                }
-            })
-            
-            select {
-            case msg := <-messages:
-                return msg, nil
-            case <-ctx.Done():
-                return MQTTMessage{}, ctx.Err()
-            }
-        },
-    }
-}`
-        }
-    ];
 
     // Simulate protocol data
     useEffect(() => {
@@ -259,7 +272,12 @@ const ProtocolSimulator = () => {
 
                             <AnimatePresence mode="wait">
                                 {activeProtocols.map(id => {
+
                                     const protocol = protocols.find(p => p.id === id);
+                                    if (!protocol) {
+                                      return null; // Handle missing protocol gracefully
+                                    }
+
                                     return (
                                         <motion.div
                                             key={id}
@@ -295,9 +313,9 @@ const ProtocolSimulator = () => {
 {`func ComposeReaders(ctx context.Context) EdgeF[[]Reading] {
     return Combine(
         ${activeProtocols.map(id => {
-    const protocol = protocols.find(p => p.id === id);
-    return `${protocol.name}Reader.Read()`;
-}).join(',\n        ')}
+            const protocol = protocols.find(p => p.id === id);
+            return protocol ? `${protocol.name}Reader.Read()` : "// Protocol not found";
+        }).join(',\n        ')}
     ).Map(processReadings)
 }`}
                     </code>
@@ -312,4 +330,4 @@ const ProtocolSimulator = () => {
     );
 };
 
-export default ProtocolSimulator;
+export default ProtocolSimulatorSection;
