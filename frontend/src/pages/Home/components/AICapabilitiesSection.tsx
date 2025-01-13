@@ -26,7 +26,7 @@ const AICapabilitiesSection = () => {
     const [activeTab, setActiveTab] = useState('monitoring');
 
     return (
-        <div id="ai" className="py-16 bg-gray-50">
+        <div className="py-16 bg-slate-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl font-bold text-center mb-12">AI Capabilities</h2>
                 <div className="flex space-x-4 justify-center mb-8">
@@ -49,7 +49,7 @@ const AICapabilitiesSection = () => {
                         Optimization
                     </button>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm p-8">
+                <div className="bg-slate-50 rounded-lg shadow-md p-8">
                     {activeTab === 'monitoring' && (
                         <div className="space-y-4">
                             <h3 className="text-xl font-semibold">Real-Time AI Monitoring</h3>

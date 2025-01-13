@@ -143,8 +143,8 @@ const ProtocolSimulatorSection = () => {
         <div className="w-full bg-white p-8">
             <div className="max-w-6xl mx-auto">
                 {/* Controls */}
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-bold">Protocol Simulator</h2>
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-1 mb-8">
+                    <h2 className="text-2xl text-center font-bold">Protocol Simulator</h2>
                     <div className="flex gap-4">
                         <motion.button
                             className={`px-4 py-2 rounded-lg flex items-center gap-2

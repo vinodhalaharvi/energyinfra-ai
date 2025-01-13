@@ -2,9 +2,9 @@ import { ArrowRight } from "lucide-react"
 
 const HeroSection = () => {
   return (
-    <div className="pt-24 pb-16 text-center bg-gradient-to-b from-blue-50 to-white">
+    <div className="pt-24 pb-16 text-center bg-gradient-to-b from-blue-50 to-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
                 Cloud-Native Infrastructure for{' '}
                 <span className="text-blue-600">Energy Systems</span>
             </h1>
