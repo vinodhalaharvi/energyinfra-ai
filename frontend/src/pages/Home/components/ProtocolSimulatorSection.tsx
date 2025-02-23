@@ -165,9 +165,9 @@ const ProtocolSimulatorSection = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-8">
+                <div className="w-full flex flex-col sm:flex-row gap-4">
                     {/* Simulator Side */}
-                    <div>
+                    <div className='w-full'>
                         {/* Protocol Selection */}
                         <div className="space-y-4 mb-8">
                             {protocols.map(protocol => (
@@ -240,7 +240,7 @@ const ProtocolSimulatorSection = () => {
                         </div>
 
                         {/* Metrics */}
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                             <div className="bg-blue-50 p-4 rounded-lg">
                                 <div className="text-sm text-gray-500">Messages</div>
                                 <div className="text-2xl font-bold text-blue-600">
@@ -253,7 +253,7 @@ const ProtocolSimulatorSection = () => {
                                     {metrics.errors}
                                 </div>
                             </div>
-                            <div className="bg-green-50 p-4 rounded-lg">
+                            <div className="bg-green-50 p-4 rounded-lg col-span-2 md:col-auto">
                                 <div className="text-sm text-gray-500">Latency</div>
                                 <div className="text-2xl font-bold text-green-600">
                                     {metrics.latency.toFixed(1)}ms
@@ -263,8 +263,8 @@ const ProtocolSimulatorSection = () => {
                     </div>
 
                     {/* Code Side */}
-                    <div>
-                        <div className="bg-gray-900 rounded-lg p-6">
+                    <div className='w-full bg-gray-900 overflow-auto rounded-lg p-6'>
+                        <div className=" ">
                             <div className="flex items-center gap-2 mb-4 text-gray-400">
                                 <Terminal size={20} />
                                 <span>Protocol Implementation</span>
