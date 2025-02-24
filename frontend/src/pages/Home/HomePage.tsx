@@ -5,6 +5,8 @@ import ContactSection from "./components/ContactSection";
 import CoreFeaturesSection from "./components/CoreFeaturesSection";
 import HeroSection from "./components/HeroSection";
 import UseCasesSection from "./components/UseCasesSection";
+import ArchitectureFlowSection from "./components/ArchitectureFlowSection"; // <-- Import here
+
 import { motion } from "framer-motion";
 
 const zoomInVariants = {
@@ -18,8 +20,8 @@ const fadeUpVariants = {
 };
 
 const transitionSettings = {
-  duration: 0.3, // 300ms duration
-  delay: 0.05,   // 50ms delay
+  duration: 0.3,
+  delay: 0.05,
   ease: "easeInOut"
 };
 
@@ -79,6 +81,18 @@ const HomePage: React.FC = () => {
         viewport={{ once: true, amount: 0.2 }}
       >
         <UseCasesSection />
+      </motion.div>
+
+      {/* New Architecture Flow Section */}
+      <motion.div
+        id="architecture-flow"
+        variants={zoomInVariants}
+        initial="hidden"
+        whileInView="visible"
+        transition={transitionSettings}
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <ArchitectureFlowSection />
       </motion.div>
 
       <motion.div

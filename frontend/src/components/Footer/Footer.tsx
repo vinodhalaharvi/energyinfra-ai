@@ -3,7 +3,7 @@ import { Facebook, Twitter, Linkedin } from "lucide-react";
 const Footer = () => {
     return (
       <footer className="bg-gray-900 text-white py-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-10 lg:px-12 flex flex-col items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-10 lg:px-12 flex flex-col items-center justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="flex flex-col items-center sm:items-start">
               <h3 className="text-lg font-bold mb-2 sm:mb-4">EnergyInfra.AI</h3>
