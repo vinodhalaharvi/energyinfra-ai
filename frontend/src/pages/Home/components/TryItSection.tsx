@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {ArrowRight, Cloud, Play, Server, Terminal} from 'lucide-react';
+import {Cloud, Play, Server, Terminal} from 'lucide-react';
 
 interface Command {
     command: string;
@@ -134,11 +134,15 @@ edge-simulator-5d76d559f9-qp2nm   1/1     Running   0          45s`
                 {/* Action Buttons */}
                 <div className="text-center space-y-4">
                     <button
-                        className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 inline-flex items-center">
+                        className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 inline-flex items-center"
+                        onClick={() => {
+                            alert("Please run the following command in your terminal:\ncurl -O https://energy-infra.io/demo/setup.sh && chmod +x setup.sh && ./setup.sh");
+                        }}
+                    >
                         <Play className="w-5 h-5 mr-2"/>
                         Launch Sandbox
                     </button>
-                    <div className="flex justify-center gap-4">
+                    {/* <div className="flex justify-center gap-4">
                         <a href="#docs" className="text-gray-600 hover:text-gray-900 inline-flex items-center">
                             View Documentation
                             <ArrowRight className="w-4 h-4 ml-1"/>
@@ -147,7 +151,7 @@ edge-simulator-5d76d559f9-qp2nm   1/1     Running   0          45s`
                             GitHub Repository
                             <ArrowRight className="w-4 h-4 ml-1"/>
                         </a>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
